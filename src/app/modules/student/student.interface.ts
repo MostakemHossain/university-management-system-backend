@@ -19,7 +19,8 @@ export type TLocalGuardian = {
   relation: string;
 };
 export type TStudent = {
-  name:TStudentName;
+  id: string;
+  name: TStudentName;
   gender: 'male' | 'female';
   dateOfBirth: string;
   email: string;

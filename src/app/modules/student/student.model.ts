@@ -58,6 +58,11 @@ const localGuardianSchema = new Schema<TLocalGuardian>({
 
 // Student Schema
 export const studentSchema = new Schema<TStudent>({
+  id: {
+    type: String,
+    unique: true,
+    required: [true, 'Student Id is required'],
+  },
   name: { type: nameSchema, required: true },
   gender: {
     type: String,
