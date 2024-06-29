@@ -1,5 +1,6 @@
-import cors from "cors";
-import express, { Application, Request, Response } from "express";
+import cors from 'cors';
+import express, { Application, Request, Response } from 'express';
+import { studentRoutes } from './app/modules/student/student.routes';
 const app: Application = express();
 const port = 3000;
 
@@ -7,9 +8,11 @@ const port = 3000;
 app.use(cors());
 app.use(express.json());
 
-app.get("/", (req: Request, res: Response) => {
+app.use('/api/v1/student', studentRoutes);
+
+app.get('/', (req: Request, res: Response) => {
   res.json({
-    message: "University management system API",
+    message: 'University management system API',
   });
 });
 
