@@ -1,3 +1,7 @@
+// student.interface.ts
+
+import { Model } from 'mongoose';
+
 export type TGuardian = {
   fatherName: string;
   fatherOccupation: string;
@@ -6,11 +10,13 @@ export type TGuardian = {
   motherOccupation: string;
   motherContactNumber: string;
 };
+
 export type TStudentName = {
   firstName: string;
   middleName?: string;
   lastName: string;
 };
+
 export type TLocalGuardian = {
   name: string;
   occupation: string;
@@ -18,15 +24,17 @@ export type TLocalGuardian = {
   address: string;
   relation: string;
 };
+
 export type TStudent = {
   id: string;
+  password: string;
   name: TStudentName;
   gender: 'male' | 'female' | 'other';
   dateOfBirth: string;
   email: string;
   contactNumber: string;
   emergencyContactNumber: string;
-  bloodGroup: 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-';
+  bloodGroup?: 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-';
   presentAddress: string;
   permanentAddress: string;
   guardian: TGuardian;
@@ -35,3 +43,11 @@ export type TStudent = {
   isActive: 'active' | 'blocked';
   isDeleted: boolean;
 };
+export type StudentMethods = {
+  isUserExists(id: string): Promise<TStudent | null>;
+};
+export type StudentModel = Model<
+  TStudent,
+  Record<string, never>,
+  StudentMethods
+>;

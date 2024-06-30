@@ -1,5 +1,9 @@
+import bcrypt from 'bcrypt';
 import { Schema, model } from 'mongoose';
+import config from '../../config';
 import {
+  StudentMethods,
+  StudentModel,
   TGuardian,
   TLocalGuardian,
   TStudent,
@@ -57,11 +61,15 @@ const localGuardianSchema = new Schema<TLocalGuardian>({
 });
 
 // Student Schema
-export const studentSchema = new Schema<TStudent>({
+const studentSchema = new Schema<TStudent, StudentModel, StudentMethods>({
   id: {
     type: String,
     unique: true,
     required: [true, 'Student Id is required'],
+  },
+  password: {
+    type: String,
+    required: [true, 'Password is required'],
   },
   name: { type: nameSchema, required: true },
   gender: {
@@ -74,7 +82,6 @@ export const studentSchema = new Schema<TStudent>({
     type: String,
     required: [true, 'Email is required'],
     unique: true,
-    match: [/.+\@.+\..+/, 'Please fill a valid email address'],
   },
   contactNumber: {
     type: String,
@@ -102,4 +109,24 @@ export const studentSchema = new Schema<TStudent>({
   isActive: { type: String, enum: ['active', 'blocked'], default: 'active' },
   isDeleted: { type: Boolean, default: false },
 });
-export const Student = model<TStudent>('Student', studentSchema);
+
+// pre save middleware
+studentSchema.pre('save', async function (next) {
+  this.password = await bcrypt.hash(
+    this.password,
+    Number(config.bcrypt_salt_rounds),
+  );
+  next();
+});
+
+/// post save middleware
+studentSchema.post('save', function (doc, next) {
+  doc.password = '';
+  next();
+});
+studentSchema.methods.isUserExists = async function (id: string) {
+  const isUserExists = await Student.findOne({ id });
+  return isUserExists;
+};
+
+export const Student = model<TStudent, StudentModel>('Student', studentSchema);
