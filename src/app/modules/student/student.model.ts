@@ -129,4 +129,17 @@ studentSchema.methods.isUserExists = async function (id: string) {
   return isUserExists;
 };
 
+// query middleware
+studentSchema.pre('find', function (next) {
+  this.find({ isDeleted: { $ne: true } });
+  next();
+});
+studentSchema.pre('findOne', function (next) {
+  this.find({ isDeleted: { $ne: true } });
+  next();
+});
+studentSchema.pre('aggregate', function (next) {
+  this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
+});
+
 export const Student = model<TStudent, StudentModel>('Student', studentSchema);
