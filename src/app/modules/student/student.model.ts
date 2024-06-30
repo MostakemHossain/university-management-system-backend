@@ -66,7 +66,7 @@ export const studentSchema = new Schema<TStudent>({
   name: { type: nameSchema, required: true },
   gender: {
     type: String,
-    enum: ['male', 'female'],
+    enum: ['male', 'female', 'other'],
     required: [true, 'Gender is required'],
   },
   dateOfBirth: { type: String, required: [true, 'Date of birth is required'] },
