@@ -68,10 +68,13 @@ const studentSchema = new Schema<TStudent, StudentModel, StudentMethods>(
       unique: true,
       required: [true, 'Student Id is required'],
     },
-    password: {
-      type: String,
-      required: [true, 'Password is required'],
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      unique: true,
+      required: [true, 'User Id is required'],
     },
+
     name: { type: nameSchema, required: true },
     gender: {
       type: String,
@@ -110,7 +113,6 @@ const studentSchema = new Schema<TStudent, StudentModel, StudentMethods>(
     guardian: { type: guardianSchema, required: true },
     localGuardian: { type: localGuardianSchema, required: true },
     profileImage: { type: String },
-    isActive: { type: String, enum: ['active', 'blocked'], default: 'active' },
     isDeleted: { type: Boolean, default: false },
   },
   {
@@ -125,19 +127,7 @@ studentSchema.virtual('fullName').get(function () {
 });
 
 // pre save middleware
-studentSchema.pre('save', async function (next) {
-  this.password = await bcrypt.hash(
-    this.password,
-    Number(config.bcrypt_salt_rounds),
-  );
-  next();
-});
 
-/// post save middleware
-studentSchema.post('save', function (doc, next) {
-  doc.password = '';
-  next();
-});
 studentSchema.methods.isUserExists = async function (id: string) {
   const isUserExists = await Student.findOne({ id });
   return isUserExists;
